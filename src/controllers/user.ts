@@ -28,6 +28,18 @@ class user {
             res.status(200).json(results);
         });
     }
+
+    public async likeUser(req: Request, res: Response) {
+        const UserData = req.body;
+        console.log(UserData);
+        await userDao.likeUser(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(err)
+                return;
+            }
+            res.status(200).json(results);
+        });
+    }
 }
 
 export default new user();
