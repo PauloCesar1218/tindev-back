@@ -3,36 +3,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const mysql_1 = __importDefault(require("mysql"));
-const routes_1 = __importDefault(require("./routes"));
-const body_parser_1 = __importDefault(require("body-parser"));
-class App {
-    constructor() {
+var express_1 = __importDefault(require("express"));
+var cors_1 = __importDefault(require("cors"));
+var mysql_1 = __importDefault(require("mysql"));
+var routes_1 = __importDefault(require("./routes"));
+var body_parser_1 = __importDefault(require("body-parser"));
+var App = /** @class */ (function () {
+    function App() {
+        var _this = this;
         this.port = process.env.PORT || 5000;
         this.express = express_1.default();
-        this.express.listen(this.port, () => console.log('Server listening on port', this.port));
+        this.express.listen(this.port, function () { return console.log('Server listening on port', _this.port); });
         this.middlewares();
         this.connection = this.databaseConnection();
         this.routes();
     }
-    middlewares() {
+    App.prototype.middlewares = function () {
         // parse application/x-www-form-urlencoded
         this.express.use(body_parser_1.default.urlencoded({ extended: false }));
         // parse application/json
         this.express.use(body_parser_1.default.json());
         // Allow Cross-Origin Resource Sharing
         this.express.use(cors_1.default());
-    }
-    databaseConnection() {
-        const conn = mysql_1.default.createConnection({
+    };
+    App.prototype.databaseConnection = function () {
+        var conn = mysql_1.default.createConnection({
             host: 'localhost',
             user: 'root',
             password: '',
             database: 'tindev',
         });
-        conn.connect(err => {
+        conn.connect(function (err) {
             if (err) {
                 console.log('Could not connect to dabase, error ->', err);
             }
@@ -41,9 +42,10 @@ class App {
             }
         });
         return conn;
-    }
-    routes() {
+    };
+    App.prototype.routes = function () {
         this.express.use(routes_1.default);
-    }
-}
+    };
+    return App;
+}());
 exports.default = new App();

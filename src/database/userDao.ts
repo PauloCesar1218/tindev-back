@@ -12,9 +12,10 @@ class userDao {
     }
 
     public insertUser(params: UserModel, callback: queryCallback) {
+        console.log('params', params);
         const query = app.connection.query(`
-            INSERT INTO user (github_username, age, email, password) VALUES (?, ?, ?, ?);
-        `, [params.github_username, params.age, params.email, params.password], callback);
+            INSERT INTO users (github_username, age, email, password, name, bio, image_url) VALUES (?, ?, ?, ?, ?, ?, ?);
+        `, [params.github_username, params.age, params.email, params.password, params.name, params.bio, params.image_url], callback);
         console.log(query.sql);
     }
 

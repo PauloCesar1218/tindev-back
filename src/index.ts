@@ -2,19 +2,21 @@ import express from 'express';
 import cors from 'cors';
 import mysql from 'mysql';
 import routes from './routes';
+import database from './database/connectionFactory';
 import bodyParser from 'body-parser';
 
 class App {
     public express: express.Application;
     public connection: mysql.Connection;
-    private port = process.env.PORT || 5000;
+    private port: number | string  = process.env.PORT || 5000;
 
     public constructor() {
         this.express = express();
         this.express.listen(this.port, () => console.log('Server listening on port', this.port));
 
         this.middlewares();
-        this.connection = this.databaseConnection();
+        this. connection = database.connectDatabase();
+        // this.connection = this.databaseConnection();
         this.routes();
     }
 
@@ -25,23 +27,6 @@ class App {
         this.express.use(bodyParser.json())
         // Allow Cross-Origin Resource Sharing
         this.express.use(cors());
-    }
-
-    public databaseConnection(): mysql.Connection {
-        const conn = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '',
-            database: 'tindev',
-        });
-        conn.connect(err => {
-            if (err) {
-                console.log('Could not connect to dabase, error ->', err);
-            } else {
-                console.log('Database connected');
-            }
-        });
-        return conn;
     }
 
     private routes() {
