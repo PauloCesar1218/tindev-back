@@ -39,6 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var userDao_1 = __importDefault(require("../database/userDao"));
+var axios_1 = __importDefault(require("axios"));
 var user = /** @class */ (function () {
     function user() {
     }
@@ -46,20 +47,15 @@ var user = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var UserData;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        UserData = req.body;
-                        return [4 /*yield*/, userDao_1.default.getUsers(UserData, function (err, results, fields) {
-                                if (err) {
-                                    res.status(500).json(err);
-                                    return;
-                                }
-                                res.status(200).send(results);
-                            })];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                UserData = req.body;
+                userDao_1.default.getUsers(UserData, function (err, results, fields) {
+                    if (err) {
+                        res.status(500).json(err);
+                        return;
+                    }
+                    res.status(200).json(results);
+                });
+                return [2 /*return*/];
             });
         });
     };
@@ -70,7 +66,14 @@ var user = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         UserData = req.body;
-                        console.log(UserData);
+                        return [4 /*yield*/, axios_1.default.get("https://api.github.com/users/" + UserData.github_username)
+                                .then(function (data) {
+                                UserData.image_url = data.data.avatar_url;
+                                UserData.name = data.data.name;
+                                UserData.bio = data.data.bio;
+                            })];
+                    case 1:
+                        _a.sent();
                         return [4 /*yield*/, userDao_1.default.insertUser(UserData, function (err, results, fields) {
                                 if (err) {
                                     res.status(500).json(err);
@@ -78,7 +81,7 @@ var user = /** @class */ (function () {
                                 }
                                 res.status(200).json(results);
                             })];
-                    case 1:
+                    case 2:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -92,13 +95,19 @@ var user = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         UserData = req.body;
-                        console.log(UserData);
-                        return [4 /*yield*/, userDao_1.default.likeUser(UserData, function (err, results, fields) {
-                                if (err) {
-                                    res.status(500).json(err);
-                                    return;
-                                }
-                                res.status(200).json(results);
+                        console.log('oi');
+                        return [4 /*yield*/, axios_1.default.get("https://api.github.com/users/" + UserData.github_username)
+                                .then(function (data) {
+                                UserData.image_url = data.data.avatar_url;
+                                UserData.name = data.data.name;
+                                UserData.bio = data.data.bio;
+                                userDao_1.default.likeUser(UserData, function (err, results, fields) {
+                                    if (err) {
+                                        res.status(500).json(err);
+                                        return;
+                                    }
+                                    res.status(200).json(results);
+                                });
                             })];
                     case 1:
                         _a.sent();

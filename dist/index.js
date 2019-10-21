@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
-var mysql_1 = __importDefault(require("mysql"));
 var routes_1 = __importDefault(require("./routes"));
+var connectionFactory_1 = __importDefault(require("./database/connectionFactory"));
 var body_parser_1 = __importDefault(require("body-parser"));
 var App = /** @class */ (function () {
     function App() {
@@ -15,7 +15,8 @@ var App = /** @class */ (function () {
         this.express = express_1.default();
         this.express.listen(this.port, function () { return console.log('Server listening on port', _this.port); });
         this.middlewares();
-        this.connection = this.databaseConnection();
+        this.connection = connectionFactory_1.default.connectDatabase();
+        // this.connection = this.databaseConnection();
         this.routes();
     }
     App.prototype.middlewares = function () {
@@ -25,23 +26,6 @@ var App = /** @class */ (function () {
         this.express.use(body_parser_1.default.json());
         // Allow Cross-Origin Resource Sharing
         this.express.use(cors_1.default());
-    };
-    App.prototype.databaseConnection = function () {
-        var conn = mysql_1.default.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '',
-            database: 'tindev',
-        });
-        conn.connect(function (err) {
-            if (err) {
-                console.log('Could not connect to dabase, error ->', err);
-            }
-            else {
-                console.log('Database connected');
-            }
-        });
-        return conn;
     };
     App.prototype.routes = function () {
         this.express.use(routes_1.default);

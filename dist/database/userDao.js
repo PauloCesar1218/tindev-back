@@ -8,10 +8,11 @@ var userDao = /** @class */ (function () {
     function userDao() {
     }
     userDao.prototype.getUsers = function (params, callback) {
-        index_1.default.connection.query("\n            SELECT * FROM user\n        ", callback);
+        index_1.default.connection.query("\n            SELECT * FROM users\n        ", callback);
     };
     userDao.prototype.insertUser = function (params, callback) {
-        var query = index_1.default.connection.query("\n            INSERT INTO user (github_username, age, email, password) VALUES (?, ?, ?, ?);\n        ", [params.github_username, params.age, params.email, params.password], callback);
+        console.log('params', params);
+        var query = index_1.default.connection.query("\n            INSERT INTO users (github_username, age, email, password, name, bio, image_url) VALUES (?, ?, ?, ?, ?, ?, ?);\n        ", [params.github_username, params.age, params.email, params.password, params.name, params.bio, params.image_url], callback);
         console.log(query.sql);
     };
     userDao.prototype.likeUser = function (params, callback) {

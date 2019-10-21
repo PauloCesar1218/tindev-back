@@ -7,7 +7,7 @@ class userDao {
 
     public getUsers(params: UserModel, callback: queryCallback) {
         app.connection.query(`
-            SELECT * FROM user
+            SELECT * FROM users
         `, callback);
     }
 
