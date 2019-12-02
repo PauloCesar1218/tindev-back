@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mysql_1 = __importDefault(require("mysql"));
-var Connection = /** @class */ (function () {
-    function Connection() {
+const mysql_1 = __importDefault(require("mysql"));
+class Connection {
+    constructor() {
         this.conn = mysql_1.default.createConnection({
             host: 'localhost',
             user: 'root',
@@ -13,8 +13,8 @@ var Connection = /** @class */ (function () {
             database: 'tindev',
         });
     }
-    Connection.prototype.connectDatabase = function () {
-        this.conn.connect(function (err) {
+    connectDatabase() {
+        this.conn.connect(err => {
             if (err) {
                 console.log(err);
             }
@@ -23,7 +23,6 @@ var Connection = /** @class */ (function () {
             }
         });
         return this.conn;
-    };
-    return Connection;
-}());
+    }
+}
 exports.default = new Connection();

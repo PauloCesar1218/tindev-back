@@ -1,121 +1,131 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var userDao_1 = __importDefault(require("../database/userDao"));
-var axios_1 = __importDefault(require("axios"));
-var user = /** @class */ (function () {
-    function user() {
+const userDao_1 = __importDefault(require("../database/userDao"));
+const axios_1 = __importDefault(require("axios"));
+class user {
+    async getUsers(req, res) {
+        const UserData = req.body;
+        userDao_1.default.getUsers(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(err);
+                return;
+            }
+            res.status(200).json(results);
+        });
     }
-    user.prototype.getUsers = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var UserData;
-            return __generator(this, function (_a) {
-                UserData = req.body;
-                userDao_1.default.getUsers(UserData, function (err, results, fields) {
+    async insertUser(req, res) {
+        const UserData = req.body;
+        await axios_1.default.get(`https://api.github.com/users/${UserData.github_username}`)
+            .then(data => {
+            UserData.image_url = data.data.avatar_url;
+            UserData.name = data.data.name;
+            UserData.bio = data.data.bio.toString();
+        });
+        await userDao_1.default.insertUser(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(err);
+                return;
+            }
+            res.status(200).json(results);
+        });
+    }
+    async likeUser(req, res) {
+        const UserData = req.body;
+        userDao_1.default.likeUser(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(err);
+                return;
+            }
+            res.status(200).json(results);
+        });
+    }
+    async createMatch(req, res) {
+        const UserData = req.body;
+        const userReturn = [];
+        await userDao_1.default.searchMatches(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(err);
+                return;
+            }
+            results.map((x) => {
+                const possibleMatch = {
+                    id_profile: UserData.id_profile,
+                    id_user: x.id_user
+                };
+                console.log(possibleMatch);
+                userDao_1.default.alreadyMatched(possibleMatch, (err, results, fields) => {
                     if (err) {
                         res.status(500).json(err);
                         return;
                     }
-                    res.status(200).json(results);
+                    console.log(results);
+                    if (!results.length) {
+                        const match = {
+                            id_profile: UserData.id_profile,
+                            id_user: x.id_user
+                        };
+                        console.log(match);
+                        userDao_1.default.matchUsers(match, (err, results, fields) => {
+                            if (err) {
+                                res.status(500).json(err);
+                                return;
+                            }
+                            userReturn.push(results);
+                        });
+                    }
                 });
-                return [2 /*return*/];
+            });
+            setTimeout(() => {
+                res.status(200).json(userReturn);
+            }, 2000);
+        });
+    }
+    async sendMessage(req, res) {
+        const UserData = req.body;
+        await userDao_1.default.addMessage(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(results);
+            }
+            res.status(200).json(results);
+        });
+    }
+    async getDevelopers(req, res) {
+        const UserData = req.body;
+        await userDao_1.default.getDevelopers(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(results);
+            }
+            res.status(200).json(results);
+        });
+    }
+    async getProfileConversations(req, res) {
+        const UserData = req.body, UserReturn = { matches: [], conversations: [], hasMessages: [] }, formatData = (data) => {
+            delete data.hasMessages;
+            return data;
+        };
+        await userDao_1.default.getMatches(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(results);
+            }
+            UserReturn.matches = results.filter((x) => !x.flag_has_conversation);
+            UserReturn.hasMessages = results.filter((x) => x.flag_has_conversation);
+            UserReturn.hasMessages.map((x) => {
+                x.id_profile = UserData.id_profile;
+                userDao_1.default.getProfileConversations(x, (err, results, fields) => {
+                    if (err) {
+                        res.status(500).json(results);
+                    }
+                    console.log(results);
+                    UserReturn.conversations.push(results[0][0]);
+                });
             });
         });
-    };
-    user.prototype.insertUser = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var UserData;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        UserData = req.body;
-                        return [4 /*yield*/, axios_1.default.get("https://api.github.com/users/" + UserData.github_username)
-                                .then(function (data) {
-                                UserData.image_url = data.data.avatar_url;
-                                UserData.name = data.data.name;
-                                UserData.bio = data.data.bio;
-                            })];
-                    case 1:
-                        _a.sent();
-                        return [4 /*yield*/, userDao_1.default.insertUser(UserData, function (err, results, fields) {
-                                if (err) {
-                                    res.status(500).json(err);
-                                    return;
-                                }
-                                res.status(200).json(results);
-                            })];
-                    case 2:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    user.prototype.likeUser = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var UserData;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        UserData = req.body;
-                        console.log('oi');
-                        return [4 /*yield*/, axios_1.default.get("https://api.github.com/users/" + UserData.github_username)
-                                .then(function (data) {
-                                UserData.image_url = data.data.avatar_url;
-                                UserData.name = data.data.name;
-                                UserData.bio = data.data.bio;
-                                userDao_1.default.likeUser(UserData, function (err, results, fields) {
-                                    if (err) {
-                                        res.status(500).json(err);
-                                        return;
-                                    }
-                                    res.status(200).json(results);
-                                });
-                            })];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return user;
-}());
+        setTimeout(() => {
+            res.status(200).json(formatData(UserReturn));
+        }, 3000);
+    }
+}
 exports.default = new user();
