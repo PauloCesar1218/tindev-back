@@ -12,9 +12,17 @@ class userDao {
         `, callback);
     }
     getDevelopers(params, callback) {
-        index_1.default.connection.query(`
-            SELECT * FROM developers LIMIT 20;
+        const query = index_1.default.connection.query(`
+            SELECT 
+            d.id
+            , d.name
+            , d.image_url
+            , d.age
+            , d.bio 
+            , EXISTS(SELECT * FROM users_likes ul WHERE ul.id_user = ${parseInt(params)} AND ul.id_user_liked = d.id) AS already_seen
+            FROM developers d WHERE d.id <> ${parseInt(params)} LIMIT 20;
         `, callback);
+        console.log(query.sql);
     }
     insertUser(params, callback) {
         console.log('params', params);
@@ -78,6 +86,12 @@ class userDao {
             INNER JOIN developers dev ON (pc.id_profile <> ? AND dev.id = pc.id_profile OR pc.id_profile = ? AND dev.id = pc.id_user)
             WHERE pc.id_profile = ? OR pc.id_user = ?;
         `, [params.id_profile, params.id_profile, params.id_profile, params.id_profile, params.id_profile, params.id_profile], callback);
+        console.log(query.sql);
+    }
+    login(params, callback) {
+        const query = index_1.default.connection.query(`
+            SELECT * FROM users WHERE email = ? AND PASSWORD = ?;
+        `, [params.email, params.password], callback);
         console.log(query.sql);
     }
 }

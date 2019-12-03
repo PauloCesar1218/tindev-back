@@ -23,7 +23,7 @@ class user {
         .then(data => {
             UserData.image_url = data.data.avatar_url;
             UserData.name = data.data.name;
-            UserData.bio = data.data.bio.toString();
+            UserData.bio = data.data.bio;
         });
         await userDao.insertUser(UserData, (err, results, fields) => {
             if (err) {
@@ -99,10 +99,26 @@ class user {
     }
 
     public async getDevelopers(req: Request, res: Response) {
-        const UserData = req.body;
+        const UserData = req.params.id;
+        console.log(req.params);
+        
         await userDao.getDevelopers(UserData, (err, results, fields) => {
             if (err) {
                 res.status(500).json(results);
+            }
+            res.status(200).json(results.filter((x: any) => x.already_seen == 0));
+        });
+    }
+
+    public async login(req: Request, res: Response) {
+        const UserData = req.body;
+        await userDao.login(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(results);
+            }
+            if (!results.length) {
+                res.status(404).json({msg: 'not found'});
+                return;
             }
             res.status(200).json(results);
         });

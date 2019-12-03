@@ -17,7 +17,9 @@ routes.post('/user/match', userController.createMatch);
 
 routes.post('/user/send_message', userController.sendMessage);
 
-routes.get('/developers', userController.getDevelopers);
+routes.post('/user/login', userController.login);
+
+routes.get('/developers/:id', userController.getDevelopers);
 
 routes.post('/developers/conversations', userController.getProfileConversations);
 

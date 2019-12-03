@@ -14,6 +14,7 @@ routes.post('/user/insert', user_1.default.insertUser);
 routes.post('/user/like', user_1.default.likeUser);
 routes.post('/user/match', user_1.default.createMatch);
 routes.post('/user/send_message', user_1.default.sendMessage);
-routes.get('/developers', user_1.default.getDevelopers);
+routes.post('/user/login', user_1.default.login);
+routes.get('/developers/:id', user_1.default.getDevelopers);
 routes.post('/developers/conversations', user_1.default.getProfileConversations);
 exports.default = routes;
