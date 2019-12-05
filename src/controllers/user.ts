@@ -45,6 +45,19 @@ class user {
         });
     }
 
+    public async getConversationMessages(req: Request, res: Response) {
+        const UserData = req.body;
+        let userReturn: { messages: any[] } = { messages: [] };
+        userDao.getConversationMessages(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(err)
+                return;
+            }
+            userReturn.messages = results;
+            res.status(200).json(results);
+        });
+    }
+
     public async createMatch(req: Request, res: Response) {
         const UserData = req.body;
         const userReturn: any[] = []

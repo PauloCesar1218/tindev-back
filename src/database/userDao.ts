@@ -55,6 +55,16 @@ class userDao {
         console.log(query.sql);
     }
 
+    public getConversationMessages(params: any, callback: queryCallback) {
+        const query = app.connection.query(`
+            SELECT * 
+            FROM conversation_messages cm 
+            INNER JOIN developers dev ON (dev.id = cm.id_profile)
+            WHERE cm.id_conversation = 27 AND cm.deleted_at IS NULL;
+        `, [params.id_conversation], callback);
+        console.log(query.sql);
+    }
+
     public alreadyMatched(params: any, callback: queryCallback) {
         const query = app.connection.query(`
             SELECT * FROM profile_conversation WHERE id_profile = ? AND id_user = ? OR id_profile = ? AND id_user = ?;

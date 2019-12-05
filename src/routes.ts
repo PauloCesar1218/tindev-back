@@ -23,4 +23,6 @@ routes.get('/developers/:id', userController.getDevelopers);
 
 routes.post('/developers/conversations', userController.getProfileConversations);
 
+routes.post('/developers/conversations/messages', userController.getConversationMessages);
+
 export default routes;
