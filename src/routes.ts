@@ -7,22 +7,22 @@ routes.get('/', (req, res) => {
     res.send('Hello World!!!');
 });
 
-routes.get('/users', userController.getUsers);
-
-routes.post('/user/insert', userController.insertUser);
-
-routes.post('/user/like', userController.likeUser);
-
-routes.post('/user/match', userController.createMatch);
-
-routes.post('/user/send_message', userController.sendMessage);
-
-routes.post('/user/login', userController.login);
-
-routes.get('/developers/:id', userController.getDevelopers);
+routes.post('/developers/conversations/messages', userController.getConversationMessages);
 
 routes.post('/developers/conversations', userController.getProfileConversations);
 
-routes.post('/developers/conversations/messages', userController.getConversationMessages);
+routes.post('/user/send_message', userController.sendMessage);
+
+routes.get('/developers/:id', userController.getDevelopers);
+
+routes.post('/user/insert', userController.insertUser);
+
+routes.post('/user/match', userController.createMatch);
+
+routes.post('/user/like', userController.likeUser);
+
+routes.post('/user/login', userController.login);
+
+routes.get('/users', userController.getUsers);
 
 export default routes;

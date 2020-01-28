@@ -71,19 +71,16 @@ class user {
                     id_profile: UserData.id_profile,
                     id_user: x.id_user
                 }
-                console.log(possibleMatch);
                 userDao.alreadyMatched(possibleMatch, (err, results, fields) => {
                     if (err) {
                         res.status(500).json(err);
                         return;
                     }
-                    console.log(results);
                     if (!results.length) {
                         const match = {
                             id_profile: UserData.id_profile,
                             id_user: x.id_user
                         };
-                        console.log(match);
                         
                         userDao.matchUsers(match, (err, results, fields) => {
                             if (err) {
@@ -113,7 +110,6 @@ class user {
 
     public async getDevelopers(req: Request, res: Response) {
         const UserData = req.params.id;
-        console.log(req.params);
         
         await userDao.getDevelopers(UserData, (err, results, fields) => {
             if (err) {
@@ -159,7 +155,6 @@ class user {
                     if (err) {
                         res.status(500).json(results);
                     }
-                    console.log(results);
                     UserReturn.conversations.push(results[0][0]);
                 });
             });
