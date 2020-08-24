@@ -42,6 +42,18 @@ class user {
             res.status(200).json(results);
         });
     }
+    async getConversationMessages(req, res) {
+        const UserData = req.body;
+        let userReturn = { messages: [] };
+        userDao_1.default.getConversationMessages(UserData, (err, results, fields) => {
+            if (err) {
+                res.status(500).json(err);
+                return;
+            }
+            userReturn.messages = results;
+            res.status(200).json(results);
+        });
+    }
     async createMatch(req, res) {
         const UserData = req.body;
         const userReturn = [];
@@ -55,19 +67,16 @@ class user {
                     id_profile: UserData.id_profile,
                     id_user: x.id_user
                 };
-                console.log(possibleMatch);
                 userDao_1.default.alreadyMatched(possibleMatch, (err, results, fields) => {
                     if (err) {
                         res.status(500).json(err);
                         return;
                     }
-                    console.log(results);
                     if (!results.length) {
                         const match = {
                             id_profile: UserData.id_profile,
                             id_user: x.id_user
                         };
-                        console.log(match);
                         userDao_1.default.matchUsers(match, (err, results, fields) => {
                             if (err) {
                                 res.status(500).json(err);
@@ -94,7 +103,6 @@ class user {
     }
     async getDevelopers(req, res) {
         const UserData = req.params.id;
-        console.log(req.params);
         await userDao_1.default.getDevelopers(UserData, (err, results, fields) => {
             if (err) {
                 res.status(500).json(results);
@@ -132,7 +140,6 @@ class user {
                     if (err) {
                         res.status(500).json(results);
                     }
-                    console.log(results);
                     UserReturn.conversations.push(results[0][0]);
                 });
             });
