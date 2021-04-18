@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import { UserModel } from '../models/userModel';
 import userDao from '../database/userDao';
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 
 class user {
+    private superSecretKey: string = 'Uk9_l{:P%G}tv2>ar6<zS1$`bmN5Jw'
     
     public async getUsers(req: Request, res: Response) {
         const UserData = req.body;
@@ -120,8 +122,9 @@ class user {
     }
 
     public async login(req: Request, res: Response) {
-        const UserData = req.body;
+        const UserData = req.body;  
         console.log(UserData);
+        console.log(req.body);
         await userDao.login(UserData, (err, results, fields) => {
             if (err) {
                 res.status(500).json(results);
@@ -130,9 +133,19 @@ class user {
                 res.status(404).json({msg: 'not found'});
                 return;
             }
-            res.status(200).json(results);
+            const token = jwt.sign({results: results[0]}, process.env.SUPERSECRETKEY || '');
+            console.log(token);
+            
+            res.status(200).json(token);
         });
     }
+
+    public async verifyToken(req: Request, res: Response) {
+        const { token } = req.body;
+        const decoded = jwt.verify(token, process.env.SUPERSECRETKEY || '');
+        console.log(decoded);
+        res.status(200).json(decoded);
+    }    
 
     public async getProfileConversations(req: Request, res: Response) {
         const   UserData = req.body,

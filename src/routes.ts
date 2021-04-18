@@ -15,6 +15,8 @@ routes.post('/user/send_message', userController.sendMessage);
 
 routes.get('/developers/:id', userController.getDevelopers);
 
+routes.post('/token/verify', userController.verifyToken);
+
 routes.post('/user/insert', userController.insertUser);
 
 routes.post('/user/match', userController.createMatch);

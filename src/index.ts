@@ -6,6 +6,7 @@ import database from './database/connectionFactory';
 import bodyParser from 'body-parser';
 import socket from 'socket.io';
 import http, { createServer } from 'http';
+const dotenv = require('dotenv').config()
 
 class App {
     public express: express.Application;

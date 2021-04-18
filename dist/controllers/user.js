@@ -112,6 +112,7 @@ class user {
     }
     async login(req, res) {
         const UserData = req.body;
+        console.log(UserData);
         await userDao_1.default.login(UserData, (err, results, fields) => {
             if (err) {
                 res.status(500).json(results);

@@ -12,7 +12,7 @@ const socket_io_1 = __importDefault(require("socket.io"));
 const http_1 = require("http");
 class App {
     constructor() {
-        this.port = process.env.PORT || 2000;
+        this.port = process.env.PORT || 5000;
         this.express = express_1.default();
         this.server = http_1.createServer(this.express);
         this.server.listen(this.port, () => console.log('Server listening on port', this.port));
